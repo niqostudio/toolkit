@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // リポの中の日本語の文章（コメント・Markdown）の文体の検査。違反があれば終了コード1
-//   node <このファイル> [パス...] [--summary] [--fix]
-//   node <このファイル> --commit-msg <ファイル>  コミットメッセージの検査（commit-msg フック）
+//   prose-lint [paths...] [--summary] [--fix]
+//   prose-lint --commit-msg <file>  コミットメッセージの検査（commit-msg フック）
 //   --fix: 和欧間のスペースと、行末コメントの開始位置だけ自動修正（語彙・構造は文脈の判断が必要）
 // 設定 = 実行ディレクトリの `prose-lint.json`（なければ既定値）
 import { execFileSync } from 'node:child_process';

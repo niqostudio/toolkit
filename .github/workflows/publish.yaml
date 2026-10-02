@@ -1,4 +1,4 @@
-# パッケージの公開。タグ `<パッケージ名>@<バージョン>`（例: prose-lint@0.1.0）で該当パッケージを npm に公開
+# パッケージの公開。タグ `<package>@<version>`（例: prose-lint@0.1.0）で該当パッケージを npm に公開
 # 認証 = npm の trusted publishing（OIDC）。トークンは保持しない。出どころ（provenance）を付与
 name: publish
 

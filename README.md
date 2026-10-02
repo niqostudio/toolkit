@@ -13,7 +13,7 @@
 | 項目 | 内容 |
 | --- | --- |
 | 依存 | `"@niqostudio/prose-lint": "^0.1.0"`（devDependencies） |
-| 実行 | `prose-lint [パス...] [--summary] [--fix]`。例: `"lint:prose": "prose-lint"` |
+| 実行 | `prose-lint [paths...] [--summary] [--fix]`。例: `"lint:prose": "prose-lint"` |
 | コミットメッセージ | commit-msg フックで `prose-lint --commit-msg "$1"`（下記） |
 | 設定 | 既定値で不要。変更する場合だけリポのルートに `prose-lint.json`（下記） |
 | 更新 | Dependabot・Renovate が更新の PR を作成 |
@@ -45,9 +45,9 @@
 
 ### Publishing
 
-1. `packages/<名前>/package.json` の `version` を上げてコミット
+1. `packages/<name>/package.json` の `version` を上げてコミット
 2. `git tag prose-lint@0.3.0 && git push origin prose-lint@0.3.0`
 
 ### Testing changes in a consuming repo
 
-- 利用側の `package.json` を一時的に `"link:<このリポのパス>/packages/prose-lint"` に変更し、`pnpm build` 後に確認
+- 利用側の `package.json` を一時的に `"link:<path-to-toolkit>/packages/prose-lint"` に変更し、`pnpm build` 後に確認
