@@ -5,7 +5,7 @@
 ## 規約
 
 - 構成: パッケージの一覧は README の「Packages」
-- エントリーポイント: パッケージごとに `src/index.ts`。export は外部で使用するものだけ・他パッケージの再 export なし
+- エントリポイント: パッケージごとに `src/index.ts`。export は外部で使用するものだけ・他パッケージの再 export なし
 - 公開: npm の public。パッケージに入るのは `dist` のみ
   - 秘密値・個人名・特定のリポ固有の値を含めない
 - YAML の拡張子: `.yaml`（pnpm のファイルと統一）
