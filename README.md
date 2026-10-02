@@ -20,9 +20,32 @@
 
 ### Commit messages
 
-- `.githooks/commit-msg`: `#!/bin/sh` の後に `exec npx --no -- prose-lint --commit-msg "$1"`
-- `package.json` の `scripts`: `"prepare": "git config core.hooksPath .githooks"`（`pnpm install` 時にフックを有効化）
-- 対象: 件名（`type(scope): ` を除く）と本文。`#` の行は対象外
+対象: 件名（`type(scope): ` の後ろ）と本文。`#` で始まる行は対象外
+
+利用側のリポに次の3つを追加
+
+`.githooks/commit-msg`（実行権限を付与）
+
+```sh
+#!/bin/sh
+exec npx --no -- prose-lint --commit-msg "$1"
+```
+
+`package.json`（`pnpm install` 時にフックを有効化）
+
+```json
+{
+  "scripts": {
+    "prepare": "git config core.hooksPath .githooks"
+  }
+}
+```
+
+`.gitattributes`（Windows でフックの改行が CRLF になるのを防止）
+
+```text
+.githooks/* text eol=lf
+```
 
 ### Configuration (`prose-lint.json`)
 
