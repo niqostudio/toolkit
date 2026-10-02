@@ -4,6 +4,12 @@
   "description": "リポの中の日本語の文章（コメント・Markdown）の文体の検査",
   "license": "MIT",
   "author": "NIQO STUDIO",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/niqostudio/toolkit.git",
+    "directory": "packages/prose-lint"
+  },
+  "homepage": "https://github.com/niqostudio/toolkit/tree/main/packages/prose-lint",
   "type": "module",
   "exports": {
     ".": {
