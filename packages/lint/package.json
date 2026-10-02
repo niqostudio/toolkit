@@ -1,0 +1,34 @@
+{
+  "name": "@niqostudio/lint",
+  "version": "0.1.0",
+  "description": "日本語の技術文書（コメント・README）の文体の検査",
+  "license": "MIT",
+  "author": "NIQO STUDIO",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "bin": {
+    "niqostudio-lint": "./dist/cli.js"
+  },
+  "files": ["dist"],
+  "engines": {
+    "node": ">=24"
+  },
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "check": "tsc --noEmit",
+    "prepublishOnly": "pnpm run build"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.1",
+    "typescript": "^5.9.3"
+  }
+}

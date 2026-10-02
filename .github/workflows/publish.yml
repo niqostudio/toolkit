@@ -1,0 +1,31 @@
+# パッケージの公開。タグ `<パッケージ名>@<版>`（例: lint@0.1.0）で該当パッケージを npm に公開
+# 認証 = npm の trusted publishing（OIDC）。トークンは保持しない。出どころ（provenance）を付与
+name: publish
+
+on:
+  push:
+    tags: ['*@*']
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          registry-url: https://registry.npmjs.org
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm check
+      - name: タグとパッケージの版の一致
+        run: |
+          name="${GITHUB_REF_NAME%@*}"; version="${GITHUB_REF_NAME#*@}"
+          actual=$(node -p "require('./packages/$name/package.json').version")
+          test "$version" = "$actual" || { echo "タグ $version と package.json $actual が不一致"; exit 1; }
+          echo "PKG=$name" >> "$GITHUB_ENV"
+      - run: pnpm --filter "./packages/$PKG" publish --no-git-checks
