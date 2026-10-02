@@ -17,6 +17,7 @@ describe('文章の書式', () => {
 
   it('改名はリネーム', () => {
     expect(textIssues('ファイルを改名する')).toContain('「改名」→ リネーム');
+    expect(textIssues('利用者向けの説明')).toContain('「利用者」→ ユーザー');
   });
 
   it('違反を列挙する', () => {
