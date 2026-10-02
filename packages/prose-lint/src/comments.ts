@@ -36,10 +36,23 @@ export function alignTrailing(lines: string[], fix: (text: string) => string = (
 // Markdown の本文の判定単位: 段落・箇条書き・見出しの行と表のセル。コードブロックは対象外
 export function markdownTexts(source: string): { line: number; text: string }[] {
   const out: { line: number; text: string }[] = [];
-  let code = false;
-  source.split(/\r?\n/).forEach((l, i) => {
-    if (l.startsWith('```')) code = !code;
-    if (code || l.startsWith('```') || !l.trim()) return;
+  // 対象外: コードブロック（``` と ~~~。インデントされたものを含む）・HTML のコメント・先頭の front matter
+  let fence = '';
+  let comment = false;
+  const lines = source.split(/\r?\n/);
+  const frontMatter = lines[0] === '---' ? lines.indexOf('---', 1) : -1;
+  lines.forEach((l, i) => {
+    if (i <= frontMatter) return;
+    const marker = l.match(/^\s*(```|~~~)/)?.[1];
+    if (marker && (!fence || fence === marker)) {
+      fence = fence ? '' : marker;
+      return;
+    }
+    if (fence || !l.trim()) return;
+    if (comment || l.trimStart().startsWith('<!--')) {
+      comment = !l.includes('-->');
+      return;
+    }
     const texts = l.startsWith('|') ? l.split(/(?<!\\)\|/).slice(1, -1).map((c) => c.trim()) : [l.replace(/^#+\s+|^\s*(?:[-*]|\d+\.)\s+/, '')];
     // リンクの URL 部分（`](...)`）は判定対象外
     for (const text of texts) if (text && !/^-+$/.test(text)) out.push({ line: i + 1, text: text.replace(/\[([^\]]*)\]\([^)]*\)/g, '$1') });

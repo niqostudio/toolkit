@@ -1,4 +1,4 @@
-# リポ全体の除外。パッケージ・アプリ固有のものは各階層の .gitignore（apps/site・infra）
+# リポ全体の除外
 
 # ---- 依存 ----
 node_modules/

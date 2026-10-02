@@ -11,6 +11,7 @@
   },
   "homepage": "https://github.com/niqostudio/toolkit/tree/main/packages/prose-lint",
   "type": "module",
+  "types": "./dist/index.d.ts",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",

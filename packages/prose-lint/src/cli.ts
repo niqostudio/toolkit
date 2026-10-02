@@ -2,53 +2,63 @@
 // リポの中の日本語の文章（コメント・Markdown）の文体の検査。違反があれば終了コード1
 //   prose-lint [paths...] [--summary] [--fix]
 //   prose-lint --commit-msg <file>  コミットメッセージの検査（commit-msg フック）
-//   --fix: 和欧間のスペースと、行末コメントの開始位置だけ自動修正（語彙・構造は文脈の判断が必要）
-// 設定 = 実行ディレクトリの `prose-lint.json`（なければ既定値）
+//   --fix: コメントの和欧間のスペースと、行末コメントの開始位置だけ自動修正（Markdown は対象外。語彙・構造は文脈の判断が必要）
+// 設定 = リポのルートの `prose-lint.json`（なければ既定値）。パスはリポのルートからの相対で判定
 import { execFileSync } from 'node:child_process';
 import { existsSync, readFileSync, writeFileSync } from 'node:fs';
+import { relative, resolve } from 'node:path';
 import { parseArgs } from 'node:util';
 import { commitMessageIssues } from './commit.ts';
 import { alignTrailing, lineComment, markdownTexts, trailingComment } from './comments.ts';
 import { fixSpacing, textIssues, VOCABULARY, type Vocabulary } from './text.ts';
 
 type Config = {
-  paths: string[]; // 対象のディレクトリ（git の追跡対象のみ）
+  paths: string[]; // 対象のパス（git の pathspec。追跡しているファイルのみ）
   docs: string[]; // 検査する Markdown（git の pathspec）
   extensions: string[]; // 行頭のコメントを検査する拡張子。`tf` は `#`、ほかは `//`
-  skip: string; // 対象外のパス（正規表現）
-  trailingFiles: string; // 1 フィールド 1 行・説明は行末コメントのファイル（正規表現）
+  skip: string; // 対象外のパス（正規表現。空 = なし）
+  trailingFiles: string; // 1 フィールド 1 行・説明は行末コメントのファイル（正規表現。空 = なし）
   vocabulary: { re: string; flags?: string; to: string }[]; // リポ固有の語彙（共通の語彙に追加）
 };
 
 const DEFAULTS: Config = {
-  paths: ['apps', 'packages', 'scripts'],
+  paths: ['.'],
   docs: ['*.md'],
-  extensions: ['ts', 'tsx', 'astro', 'tf'],
-  skip: '(^|/)(\\.tmp/|worker-configuration\\.d\\.ts)',
-  trailingFiles: '(^|/)schema\\.ts$',
+  extensions: ['ts', 'tsx', 'mts', 'cts', 'js', 'jsx', 'mjs', 'cjs'],
+  skip: '',
+  trailingFiles: '',
   vocabulary: [],
 };
 
+const { values, positionals } = parseArgs({ allowPositionals: true, options: { summary: { type: 'boolean', default: false }, fix: { type: 'boolean', default: false }, 'commit-msg': { type: 'string' } } });
+// 引数のパスはリポのルートからの相対に変換してから移動（サブディレクトリから実行しても同じ結果）
+const root = execFileSync('git', ['rev-parse', '--show-toplevel'], { encoding: 'utf8' }).trim();
+const commitMsg = values['commit-msg'] && resolve(values['commit-msg']);
+const args = positionals.map((p) => relative(root, resolve(p)).replaceAll('\\', '/') || '.');
+process.chdir(root);
+
 const config: Config = { ...DEFAULTS, ...(existsSync('prose-lint.json') ? (JSON.parse(readFileSync('prose-lint.json', 'utf8')) as Partial<Config>) : {}) };
 const vocabulary: Vocabulary = [...VOCABULARY, ...config.vocabulary.map((v) => ({ re: new RegExp(v.re, v.flags), to: v.to }))];
-const skip = new RegExp(config.skip);
-const trailingFiles = new RegExp(config.trailingFiles);
+const never = /(?!)/;
+const skip = config.skip ? new RegExp(config.skip) : never;
+const trailingFiles = config.trailingFiles ? new RegExp(config.trailingFiles) : never;
 const extension = new RegExp(`\\.(${config.extensions.join('|')})$`);
 
-const { values, positionals } = parseArgs({ allowPositionals: true, options: { summary: { type: 'boolean', default: false }, fix: { type: 'boolean', default: false }, 'commit-msg': { type: 'string' } } });
-if (values['commit-msg']) {
-  const found = commitMessageIssues(readFileSync(values['commit-msg'], 'utf8'), vocabulary);
+if (commitMsg) {
+  const found = commitMessageIssues(readFileSync(commitMsg, 'utf8'), vocabulary);
   for (const f of found) console.log(`コミットメッセージ ${f.line} 行目: ${f.issues.join(' / ')}
   ${f.text}`);
   process.exit(found.length ? 1 : 0);
 }
-const targets = positionals.length ? positionals : config.paths;
-const files = execFileSync('git', ['ls-files', ...targets], { encoding: 'utf8' })
-  .split('\n')
-  .filter((f) => extension.test(f) && !skip.test(f));
-const docs = execFileSync('git', ['ls-files', '--', ...(positionals.length ? positionals.filter((f) => f.endsWith('.md')) : config.docs)], { encoding: 'utf8' })
-  .split('\n')
-  .filter((f) => f.endsWith('.md') && !skip.test(f) && existsSync(f));
+// 追跡しているファイル。日本語のパスをエスケープさせないため NUL 区切り
+// 作業ツリーで削除済み（未コミット）のファイルは対象外
+const tracked = (pathspec: string[]) =>
+  execFileSync('git', ['ls-files', '-z', '--', ...pathspec], { encoding: 'utf8' })
+    .split('\0')
+    .filter((f) => f && !skip.test(f) && existsSync(f));
+const files = tracked(args.length ? args : config.paths).filter((f) => extension.test(f));
+// 引数があれば、その範囲の Markdown だけ
+const docs = tracked(args.length ? args : config.docs).filter((f) => f.endsWith('.md'));
 
 const counts = new Map<string, number>();
 let total = 0;

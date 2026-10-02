@@ -42,6 +42,23 @@ describe('文章の書式', () => {
     for (const t of ['サーバーで実行', 'インターフェースの定義', '同等の性能', '平等に扱う', '等しい値', '等幅フォント', '許可リストで照合']) expect(textIssues(t)).toEqual([]);
   });
 
+  it('誤検出しない語', () => {
+    for (const t of ['補足する', '満足した', '見直す', '素直さ', '取り消し', '受け入れる', 'Web 版の違い', '言語版ごと', '出版番号', '最新版を取得', '出来事の一覧']) expect(textIssues(t)).toEqual([]);
+  });
+
+  it('見逃さない語', () => {
+    for (const [t, w] of [['出来れば', '出来れ'], ['出来ず', '出来ず'], ['次の様だ', 'の様だ'], ['A 等）', '等'], ['A 等と B', '等']] as const) expect(textIssues(t)).toContain(textIssues(t).find((i) => i.startsWith(`「${w}」`)));
+    expect(textIssues('出来れば')).toContain('「出来れ」→ できる');
+  });
+
+  it('構造の記号・URL・メールアドレスを詰めない', () => {
+    for (const t of ['1. 取得の手順', '日本 - 説明', '値 -> 結果', 'https://example.com/?q=x日本', 'dev@example.com宛て']) expect(fixSpacing(t)).toBe(t);
+  });
+
+  it('文末の句点の後の空白で文を数えない', () => {
+    expect(textIssues('1 行目。2 行目。 ')).not.toContain('1 行の文は 2 つまで（3 つ以上は行を分ける）');
+  });
+
   it('違反を列挙する', () => {
     expect(textIssues('キャッシュを作る。')).toEqual(['末尾に句点を付けない', '「作る」→ 作成']);
     expect(textIssues('上限 (D1) の行')).toEqual(['括弧は全角（コードはバッククォート）']);

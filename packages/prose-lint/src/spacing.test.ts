@@ -27,4 +27,8 @@ describe('autoSpace', () => {
     expect(autoSpace('バージョン1.2.3を公開')).toBe('バージョン 1.2.3 を公開');
     expect(autoSpace('33.7%増')).toBe('33.7%増');
   });
+  it('日付は詰め、記号の _ も語の一部', () => {
+    expect(autoSpace('2026.10.03に公開')).toBe('2026.10.03に公開');
+    expect(autoSpace('x86_64の環境')).toBe('x86_64 の環境');
+  });
 });

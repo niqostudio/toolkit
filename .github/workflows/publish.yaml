@@ -26,7 +26,8 @@ jobs:
       - name: タグとパッケージのバージョンの一致
         run: |
           name="${GITHUB_REF_NAME%@*}"; version="${GITHUB_REF_NAME#*@}"
-          actual=$(node -p "require('./packages/$name/package.json').version")
+          echo "$name" | grep -Eq '^[a-z0-9-]+$' || { echo "パッケージ名が不正: $name"; exit 1; }
+          actual=$(NAME="$name" node -p "require('./packages/' + process.env.NAME + '/package.json').version")
           test "$version" = "$actual" || { echo "タグ $version と package.json $actual が不一致"; exit 1; }
           echo "PKG=$name" >> "$GITHUB_ENV"
       - run: pnpm --filter "./packages/$PKG" publish --no-git-checks

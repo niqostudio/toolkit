@@ -23,7 +23,7 @@ Requires Node.js 24 or later.
 prose-lint                 # check comments and all tracked Markdown files
 prose-lint src README.md   # check specific paths
 prose-lint --summary       # print counts per issue only
-prose-lint --fix           # fix spacing and trailing-comment alignment
+prose-lint --fix           # fix spacing and trailing-comment alignment in code comments
 ```
 
 Exits with code 1 when any issue is found.
@@ -69,22 +69,23 @@ The subject (after `type(scope): `) and the body are checked. Lines starting wit
 
 ## Configuration
 
-No configuration is needed. To change the defaults, add `prose-lint.json` to the repository root:
+No configuration is needed. To change the defaults, add `prose-lint.json` to the repository root. Paths are relative to the root, so the result is the same from any subdirectory.
 
 ```json
 {
-  "paths": ["apps", "packages", "scripts"],
+  "paths": ["apps", "packages"],
+  "extensions": ["ts", "astro"],
   "vocabulary": [{ "re": "同期ブロック", "to": "`synced_block`" }]
 }
 ```
 
 | Key | Description | Default |
 | --- | --- | --- |
-| `paths` | Directories whose code comments are checked (tracked files only) | `apps`, `packages`, `scripts` |
+| `paths` | Paths whose code comments are checked (git pathspec, tracked files only) | `.` (whole repository) |
 | `docs` | Markdown files to check (git pathspec) | `*.md` |
-| `extensions` | File extensions whose line comments are checked | `ts`, `tsx`, `astro`, `tf` |
-| `skip` | Paths to skip (regular expression) | `.tmp/`, `worker-configuration.d.ts` |
-| `trailingFiles` | Files whose fields use aligned trailing comments (regular expression) | `schema.ts` |
+| `extensions` | File extensions whose line comments are checked (`tf` uses `#`, others `//`) | `ts`, `tsx`, `mts`, `cts`, `js`, `jsx`, `mjs`, `cjs` |
+| `skip` | Paths to skip (regular expression) | none |
+| `trailingFiles` | Files whose fields use aligned trailing comments (regular expression) | none |
 | `vocabulary` | Extra word rules `{ re, flags?, to }`, added to the built-in ones | none |
 
 ## License
