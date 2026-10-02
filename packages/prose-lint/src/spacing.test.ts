@@ -22,4 +22,9 @@ describe('autoSpace', () => {
     const once = autoSpace('AIによって2026年9月に Notion の API を使う');
     expect(autoSpace(once)).toBe(once);
   });
-});
+  it('バージョン番号は空け、小数は詰める', () => {
+    expect(autoSpace('0.2.0にする')).toBe('0.2.0 にする');
+    expect(autoSpace('バージョン1.2.3を公開')).toBe('バージョン 1.2.3 を公開');
+    expect(autoSpace('33.7%増')).toBe('33.7%増');
+  });
+});

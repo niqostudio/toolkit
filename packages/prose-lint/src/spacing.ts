@@ -10,7 +10,8 @@ const WORD = 'A-Za-z0-9%.,:\\-';
 
 // 数字だけの語（単位・日付・章番号）は詰め、英字を含む語だけ空ける
 // - 例: `16人`・`2026年2月`・`第1章`・`30%`
-const hasLetter = (word: string) => /[A-Za-z]/.test(word);
+// バージョン番号（ドット2つ以上の数字。例: 0.2.0）も空け、小数・日付は詰める
+const hasLetter = (word: string) => /[A-Za-z]/.test(word) || /^\d+(\.\d+){2,}$/.test(word);
 const trim = (word: string) => word.replace(/[.,:\-]+$/, '');
 
 // 原稿に手で入ったスペースも対象（入力の有無によらず同じ結果にするため、空けるか詰めるかを再判定）
