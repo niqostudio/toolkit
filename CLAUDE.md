@@ -24,4 +24,5 @@
 
 - Conventional Commits。type・scope は英語、subject は日本語
 - subject は1行のみ。body は書かない（背景は PR に記載）
+- バージョンを上げるだけのコミット: `chore(release): <package>@<version>`（英語の定型。タグ名と同じ）
 - Claude・AI の署名・trailer 禁止

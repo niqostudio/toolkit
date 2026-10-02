@@ -21,7 +21,7 @@ pnpm build     # build dist/ for each package
 
 Publishing runs on GitHub Actions when a tag `<package>@<version>` is pushed. It uses npm trusted publishing with provenance, so no npm token is stored.
 
-1. Bump `version` in `packages/<package>/package.json` and commit.
+1. Bump `version` in `packages/<package>/package.json` and commit it as `chore(release): <package>@<version>`.
 2. Tag and push:
 
    ```sh
