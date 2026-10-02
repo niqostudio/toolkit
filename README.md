@@ -47,7 +47,3 @@
 
 1. `packages/<name>/package.json` の `version` を上げてコミット
 2. `git tag prose-lint@0.3.0 && git push origin prose-lint@0.3.0`
-
-### Testing changes in a consuming repo
-
-- 利用側の `package.json` を一時的に `"link:<path-to-toolkit>/packages/prose-lint"` に変更し、`pnpm build` 後に確認
