@@ -1,72 +1,35 @@
 # toolkit
 
-複数のリポで共有するパッケージ。npm に public で公開し、各リポはバージョンを指定して依存
+Shared packages for NIQO STUDIO repositories, published to npm under `@niqostudio`.
 
-## Structure
+## Packages
 
-| パッケージ | 責務 | 公開名 |
-| --- | --- | --- |
-| [packages/prose-lint](packages/prose-lint) | リポの中の日本語の文章の文体の規則（語彙・和欧間・句読点・括弧）と検査の CLI。対象 = コード中のコメント・git で追跡する Markdown | `@niqostudio/prose-lint` |
-
-## Usage
-
-| 項目 | 内容 |
+| Package | Description |
 | --- | --- |
-| 依存 | `"@niqostudio/prose-lint": "^0.1.0"`（devDependencies） |
-| 実行 | `prose-lint [paths...] [--summary] [--fix]`。例: `"lint:prose": "prose-lint"` |
-| コミットメッセージ | commit-msg フックで `prose-lint --commit-msg "$1"`（下記） |
-| 設定 | 既定値で不要。変更する場合だけリポのルートに `prose-lint.json`（下記） |
-| 更新 | Dependabot・Renovate が更新の PR を作成 |
+| [`@niqostudio/prose-lint`](packages/prose-lint) | Style checker for Japanese technical writing (comments, Markdown, commit messages) |
 
-### Commit messages
-
-対象: 件名（`type(scope): ` の後ろ）と本文。`#` で始まる行は対象外
-
-利用側のリポに次の3つを追加
-
-`.githooks/commit-msg`（実行権限を付与）
+## Development
 
 ```sh
-#!/bin/sh
-exec npx --no -- prose-lint --commit-msg "$1"
+pnpm install   # also enables the commit-msg hook
+pnpm check     # type check, tests, and prose-lint on this repository
+pnpm build     # build dist/ for each package
 ```
 
-`package.json`（`pnpm install` 時にフックを有効化）
+## Publishing
 
-```json
-{
-  "scripts": {
-    "prepare": "git config core.hooksPath .githooks"
-  }
-}
-```
+Publishing runs on GitHub Actions when a tag `<package>@<version>` is pushed. It uses npm trusted publishing with provenance, so no npm token is stored.
 
-`.gitattributes`（Windows でフックの改行が CRLF になるのを防止）
+1. Bump `version` in `packages/<package>/package.json` and commit.
+2. Tag and push:
 
-```text
-.githooks/* text eol=lf
-```
+   ```sh
+   git tag <package>@<version>
+   git push origin <package>@<version>
+   ```
 
-### Configuration (`prose-lint.json`)
+The workflow runs `pnpm check`, verifies that the tag matches `version`, and publishes the package.
 
-| キー | 内容 | 既定 |
-| --- | --- | --- |
-| `paths` | 対象のディレクトリ（git の追跡対象のみ） | `apps`・`packages`・`scripts` |
-| `docs` | 検査する Markdown（git の pathspec） | `*.md`（git で追跡するすべての Markdown） |
-| `extensions` | 行頭のコメントを検査する拡張子 | `ts`・`tsx`・`astro`・`tf` |
-| `skip` | 対象外のパス（正規表現。コード・Markdown 共通） | `.tmp/`・`worker-configuration.d.ts` |
-| `trailingFiles` | 説明を行末コメントで書くファイル（正規表現）。開始位置を統一 | `schema.ts` |
-| `vocabulary` | リポ固有の語彙 `{ re, flags?, to }`（共通の語彙に追加） | なし |
+## License
 
-## Operations
-
-| コマンド | 内容 |
-| --- | --- |
-| `pnpm check` | 型・テスト・文章の検査 |
-| `pnpm build` | 各パッケージの `dist` を生成 |
-| `git tag <package>@<version> && git push origin <package>@<version>` | GitHub Actions が check → バージョンの一致の確認 → npm に公開（trusted publishing・provenance） |
-
-### Publishing
-
-1. `packages/<name>/package.json` の `version` を上げてコミット
-2. `git tag prose-lint@0.3.0 && git push origin prose-lint@0.3.0`
+MIT
