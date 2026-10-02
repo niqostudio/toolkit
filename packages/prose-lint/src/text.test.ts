@@ -10,6 +10,11 @@ describe('文章の書式', () => {
     expect(textIssues('D1 の読み書きと読み取り専用の判定')).toEqual([]);
   });
 
+  it('バージョンの意味の「版」だけを指摘する', () => {
+    for (const t of ['版を上げる', '同じ版に上書き', 'タグと版の一致', '最新の版を取得', '版ごとに記録']) expect(textIssues(t)).toContain(`「${t.match(/(同じ|新しい|古い|前の|次の|最新の|各|旧|新)?版(を上げ|が上が|の一致|ごと)?/)![0]}」→ バージョン`);
+    for (const t of ['出版社の記事', '初版の発行', 'Web 版と iOS 版', '日本語版のドキュメント', '図版の差し替え']) expect(textIssues(t).filter((i) => i.includes('バージョン'))).toEqual([]);
+  });
+
   it('違反を列挙する', () => {
     expect(textIssues('キャッシュを作る。')).toEqual(['末尾に句点を付けない', '「作る」→ 作成']);
     expect(textIssues('上限 (D1) の行')).toEqual(['括弧は全角（コードはバッククォート）']);
