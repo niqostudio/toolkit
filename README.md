@@ -12,7 +12,8 @@ Shared packages for NIQO STUDIO repositories, published to npm under `@niqostudi
 
 ```sh
 pnpm install   # also enables the commit-msg hook
-pnpm check     # type check, tests, and prose-lint on this repository
+pnpm lint      # type check and prose-lint on this repository
+pnpm test      # unit tests
 pnpm build     # build dist/ for each package
 ```
 
@@ -28,7 +29,7 @@ Publishing runs on GitHub Actions when a tag `<package>@<version>` is pushed. It
    git push origin <package>@<version>
    ```
 
-The workflow runs `pnpm check`, verifies that the tag matches `version`, and publishes the package.
+The workflow runs `pnpm lint` and `pnpm test`, verifies that the tag matches `version`, and publishes the package.
 
 ## License
 

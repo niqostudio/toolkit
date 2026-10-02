@@ -32,8 +32,8 @@
   },
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
-    "check": "tsc --noEmit",
-    "prepublishOnly": "pnpm run build"
+    "prepublishOnly": "pnpm run build",
+    "typecheck": "tsc --noEmit"
   },
   "devDependencies": {
     "@types/node": "^26.6.1",
