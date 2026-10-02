@@ -10,7 +10,8 @@
     "build": "pnpm -r build",
     "check": "pnpm -r check && vitest run && node packages/prose-lint/src/cli.ts --summary",
     "test": "vitest run",
-    "lint:prose": "node packages/prose-lint/src/cli.ts"
+    "lint:prose": "node packages/prose-lint/src/cli.ts",
+    "prepare": "git config core.hooksPath .githooks"
   },
   "devDependencies": {
     "@types/node": "^26.6.1",

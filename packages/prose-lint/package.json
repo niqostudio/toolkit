@@ -1,7 +1,7 @@
 {
   "name": "@niqostudio/prose-lint",
-  "version": "0.1.3",
-  "description": "リポの中の日本語の文章（コメント・Markdown）の文体の検査",
+  "version": "0.2.0",
+  "description": "リポの中の日本語の文章（コメント・Markdown・コミットメッセージ）の文体の検査",
   "license": "MIT",
   "author": "NIQO STUDIO",
   "repository": {

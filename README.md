@@ -14,8 +14,15 @@
 | --- | --- |
 | 依存 | `"@niqostudio/prose-lint": "^0.1.0"`（devDependencies） |
 | 実行 | `prose-lint [パス...] [--summary] [--fix]`。例: `"lint:prose": "prose-lint"` |
+| コミットメッセージ | commit-msg フックで `prose-lint --commit-msg "$1"`（下記） |
 | 設定 | 既定値で不要。変更する場合だけリポのルートに `prose-lint.json`（下記） |
 | 更新 | Dependabot・Renovate が更新の PR を作成 |
+
+### Commit messages
+
+- `.githooks/commit-msg`: `#!/bin/sh` の後に `exec npx --no -- prose-lint --commit-msg "$1"`
+- `package.json` の `scripts`: `"prepare": "git config core.hooksPath .githooks"`（`pnpm install` 時にフックを有効化）
+- 対象: 件名（`type(scope): ` を除く）と本文。`#` の行は対象外
 
 ### Configuration (`prose-lint.json`)
 

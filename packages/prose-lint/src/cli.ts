@@ -1,11 +1,13 @@
 #!/usr/bin/env node
 // リポの中の日本語の文章（コメント・Markdown）の文体の検査。違反があれば終了コード1
 //   node <このファイル> [パス...] [--summary] [--fix]
+//   node <このファイル> --commit-msg <ファイル>  コミットメッセージの検査（commit-msg フック）
 //   --fix: 和欧間のスペースと、行末コメントの開始位置だけ自動修正（語彙・構造は文脈の判断が必要）
 // 設定 = 実行ディレクトリの `prose-lint.json`（なければ既定値）
 import { execFileSync } from 'node:child_process';
 import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { parseArgs } from 'node:util';
+import { commitMessageIssues } from './commit.ts';
 import { alignTrailing, lineComment, markdownTexts, trailingComment } from './comments.ts';
 import { fixSpacing, textIssues, VOCABULARY, type Vocabulary } from './text.ts';
 
@@ -33,7 +35,13 @@ const skip = new RegExp(config.skip);
 const trailingFiles = new RegExp(config.trailingFiles);
 const extension = new RegExp(`\\.(${config.extensions.join('|')})$`);
 
-const { values, positionals } = parseArgs({ allowPositionals: true, options: { summary: { type: 'boolean', default: false }, fix: { type: 'boolean', default: false } } });
+const { values, positionals } = parseArgs({ allowPositionals: true, options: { summary: { type: 'boolean', default: false }, fix: { type: 'boolean', default: false }, 'commit-msg': { type: 'string' } } });
+if (values['commit-msg']) {
+  const found = commitMessageIssues(readFileSync(values['commit-msg'], 'utf8'), vocabulary);
+  for (const f of found) console.log(`コミットメッセージ ${f.line} 行目: ${f.issues.join(' / ')}
+  ${f.text}`);
+  process.exit(found.length ? 1 : 0);
+}
 const targets = positionals.length ? positionals : config.paths;
 const files = execFileSync('git', ['ls-files', ...targets], { encoding: 'utf8' })
   .split('\n')
