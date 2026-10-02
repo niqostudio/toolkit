@@ -1,9 +1,16 @@
 # push・PR ごとの検査。1 ジョブで手順に名前を付け、失敗した検査を画面で識別
 name: CI
 
+# main への push と PR だけ（タグは公開のワークフローが lint・test を実行）
 on:
   push:
+    branches: [main]
   pull_request:
+
+# 同じ ref の新しい実行が来たら古い実行を中止
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
 
 permissions:
   contents: read
