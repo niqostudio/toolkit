@@ -41,12 +41,12 @@
 | --- | --- |
 | `pnpm check` | 型・テスト・文章の検査 |
 | `pnpm build` | 各パッケージの `dist` を生成 |
-| タグ `<パッケージ名>@<バージョン>` を push | GitHub Actions が check → バージョンの一致の確認 → npm に公開（trusted publishing・provenance） |
+| `git tag <package>@<version> && git push origin <package>@<version>` | GitHub Actions が check → バージョンの一致の確認 → npm に公開（trusted publishing・provenance） |
 
 ### Publishing
 
 1. `packages/<名前>/package.json` の `version` を上げてコミット
-2. `git tag prose-lint@0.1.0 && git push --tags`
+2. `git tag prose-lint@0.3.0 && git push origin prose-lint@0.3.0`
 
 ### Testing changes in a consuming repo
 
