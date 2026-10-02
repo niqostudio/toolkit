@@ -20,6 +20,28 @@ describe('文章の書式', () => {
     expect(textIssues('利用者向けの説明')).toContain('「利用者」→ ユーザー');
   });
 
+  it('表記を統一する語', () => {
+    const cases: [string, string][] = [
+      ['ホワイトリストで照合', '「ホワイトリスト」→ 許可リスト'],
+      ['エントリーポイントを指定', '「エントリーポイント」→ エントリポイント'],
+      ['マスターのデータ', '「マスター」→ マスタ'],
+      ['サーバで実行', '「サーバ」→ サーバー'],
+      ['インタフェースの定義', '「インタフェース」→ インターフェース'],
+      ['設定出来る', '「出来る」→ できる'],
+      ['全てのファイル', '「全て」→ すべて'],
+      ['A 又は B', '「又は」→ または'],
+      ['A 及び B', '「及び」→ および'],
+      ['次の様に書く', '「の様に」→ のように・のような'],
+      ['確認して下さい', '「下さい」→ ください'],
+      ['予め設定', '「予め」→ あらかじめ'],
+      ['殆どの場合', '「殆ど」→ ほとんど'],
+      ['既に登録済み', '「既に」→ すでに'],
+      ['README 等の文書', '「等」→ など'],
+    ];
+    for (const [text, issue] of cases) expect(textIssues(text)).toContain(issue);
+    for (const t of ['サーバーで実行', 'インターフェースの定義', '同等の性能', '平等に扱う', '等しい値', '等幅フォント', '許可リストで照合']) expect(textIssues(t)).toEqual([]);
+  });
+
   it('違反を列挙する', () => {
     expect(textIssues('キャッシュを作る。')).toEqual(['末尾に句点を付けない', '「作る」→ 作成']);
     expect(textIssues('上限 (D1) の行')).toEqual(['括弧は全角（コードはバッククォート）']);
@@ -27,8 +49,8 @@ describe('文章の書式', () => {
     const spacing = '和欧間のスペース（英字を含む語だけ空け、数字だけの語は詰める）';
     expect(textIssues('ブラウザのUAで再取得')).toEqual([spacing]);
     expect(textIssues('2 段の公開サフィックス')).toEqual([spacing]);
-    expect(textIssues('ホワイトリストのホストと 1回だけ再取得')).toEqual([spacing]);
-    expect(textIssues('許可リストに登録')).toEqual(['「許可リスト」→ ホワイトリスト']);
+    expect(textIssues('許可リストのホストと 1回だけ再取得')).toEqual([spacing]);
+    expect(textIssues('ホワイトリストに追加')).toEqual(['「ホワイトリスト」→ 許可リスト']);
     expect(textIssues('本文を取り出す')).toEqual(['「出す」→ 出力・表示・返却・抽出']);
   });
 
