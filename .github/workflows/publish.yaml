@@ -1,4 +1,4 @@
-# パッケージの公開。タグ `<パッケージ名>@<版>`（例: prose-lint@0.1.0）で該当パッケージを npm に公開
+# パッケージの公開。タグ `<パッケージ名>@<バージョン>`（例: prose-lint@0.1.0）で該当パッケージを npm に公開
 # 認証 = npm の trusted publishing（OIDC）。トークンは保持しない。出どころ（provenance）を付与
 name: publish
 
@@ -22,7 +22,7 @@ jobs:
           registry-url: https://registry.npmjs.org
       - run: pnpm install --frozen-lockfile
       - run: pnpm check
-      - name: タグとパッケージの版の一致
+      - name: タグとパッケージのバージョンの一致
         run: |
           name="${GITHUB_REF_NAME%@*}"; version="${GITHUB_REF_NAME#*@}"
           actual=$(node -p "require('./packages/$name/package.json').version")
