@@ -15,6 +15,10 @@ describe('文章の書式', () => {
     for (const t of ['出版社の記事', '初版の発行', 'Web 版と iOS 版', '日本語版のドキュメント', '図版の差し替え']) expect(textIssues(t).filter((i) => i.includes('バージョン'))).toEqual([]);
   });
 
+  it('改名はリネーム', () => {
+    expect(textIssues('ファイルを改名する')).toContain('「改名」→ リネーム');
+  });
+
   it('違反を列挙する', () => {
     expect(textIssues('キャッシュを作る。')).toEqual(['末尾に句点を付けない', '「作る」→ 作成']);
     expect(textIssues('上限 (D1) の行')).toEqual(['括弧は全角（コードはバッククォート）']);
