@@ -1,7 +1,7 @@
 {
-  "name": "@niqostudio/lint",
+  "name": "@niqostudio/prose-lint",
   "version": "0.1.0",
-  "description": "日本語の技術文書（コメント・README）の文体の検査",
+  "description": "リポの中の日本語の文章（コメント・Markdown）の文体の検査",
   "license": "MIT",
   "author": "NIQO STUDIO",
   "type": "module",
@@ -12,9 +12,11 @@
     }
   },
   "bin": {
-    "niqostudio-lint": "./dist/cli.js"
+    "prose-lint": "./dist/cli.js"
   },
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "engines": {
     "node": ">=24"
   },

@@ -8,9 +8,9 @@
   },
   "scripts": {
     "build": "pnpm -r build",
-    "check": "pnpm -r check && vitest run && node packages/lint/src/cli.ts --summary",
+    "check": "pnpm -r check && vitest run && node packages/prose-lint/src/cli.ts --summary",
     "test": "vitest run",
-    "lint:comments": "node packages/lint/src/cli.ts"
+    "lint:prose": "node packages/prose-lint/src/cli.ts"
   },
   "devDependencies": {
     "@types/node": "^26.6.1",
