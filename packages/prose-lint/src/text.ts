@@ -8,7 +8,7 @@ export type Vocabulary = { re: RegExp; to: string }[];
 export const VOCABULARY: Vocabulary = [
   { re: /変え[るたてなよ]|変わ[るらりっ]/, to: '変更' },
   { re: /作[るらりれろっ]/, to: '作成' },
-  { re: /(?<!取り)消[すさしせ]/, to: '削除' },
+  { re: /(?<!取り|[解抹費])消[すさしせ]/, to: '削除' },
   { re: /(?<!\p{sc=Han})足[すさしせ]/u, to: '追加' },
   { re: /分け[るたてな]/, to: '分割・分離' },
   { re: /揃[えうわいっ]/, to: '統一' },
